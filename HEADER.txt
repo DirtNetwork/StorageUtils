@@ -1,0 +1,5 @@
+This file is part of 'StorageUtils'.
+
+Copyright (c) 2024 Marc Beckhaeuser (AlphaConqueror) <marcbeckhaeuser@gmail.com>
+
+ALL RIGHTS RESERVED.
