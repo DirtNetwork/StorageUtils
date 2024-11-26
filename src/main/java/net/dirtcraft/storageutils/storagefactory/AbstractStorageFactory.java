@@ -8,11 +8,11 @@ package net.dirtcraft.storageutils.storagefactory;
 
 import net.dirtcraft.storageutils.Storage;
 import net.dirtcraft.storageutils.StorageType;
-import net.dirtcraft.storageutils.implementation.StorageImplementation;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
+import net.dirtcraft.storageutils.taskcontext.TaskContext;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public abstract class AbstractStorageFactory implements StorageFactory {
+public abstract class AbstractStorageFactory<S extends Storage<T>, T extends TaskContext> implements StorageFactory<T> {
 
     private final LoggerAdapter logger;
 
@@ -24,15 +24,15 @@ public abstract class AbstractStorageFactory implements StorageFactory {
     protected abstract StorageType getStorageType();
 
     @NonNull
-    protected abstract StorageImplementation createNewImplementation(final StorageType method);
+    protected abstract S createStorage(@NonNull StorageType type);
 
     @Override
-    public Storage getInstance() throws Exception {
+    public @NonNull S getInstance() throws Exception {
         final StorageType type = this.getStorageType();
 
         this.logger.info("Loading storage provider... [" + type.name() + "]");
 
-        final Storage storage = new Storage(this.logger, this.createNewImplementation(type));
+        final S storage = this.createStorage(type);
 
         storage.init();
         return storage;

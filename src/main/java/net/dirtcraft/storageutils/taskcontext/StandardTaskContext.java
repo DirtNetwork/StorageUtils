@@ -11,14 +11,14 @@ import java.util.Queue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.hibernate.Session;
 
-public class AbstractTaskContext implements TaskContext {
+public class StandardTaskContext implements TaskContext {
 
     @NonNull
     private final Session session;
     @NonNull
     private final Queue<Runnable> queue = new LinkedList<>();
 
-    public AbstractTaskContext(@NonNull final Session session) {
+    public StandardTaskContext(@NonNull final Session session) {
         this.session = session;
     }
 

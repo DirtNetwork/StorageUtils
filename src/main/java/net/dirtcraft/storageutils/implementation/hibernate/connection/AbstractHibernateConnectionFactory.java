@@ -18,10 +18,10 @@ import org.hibernate.cfg.Configuration;
 
 public abstract class AbstractHibernateConnectionFactory extends AbstractConnectionFactory<SessionFactory> {
 
-    private final StorageType storageType;
-    private final Configuration configuration;
-    private final StandardServiceRegistry registry;
-    private SessionFactory sessionFactory;
+    protected final StorageType storageType;
+    protected final Configuration configuration;
+    protected final StandardServiceRegistry registry;
+    protected SessionFactory sessionFactory;
 
     public AbstractHibernateConnectionFactory(final LoggerAdapter logger,
             final StorageType storageType, final StorageCredentials credentials) {

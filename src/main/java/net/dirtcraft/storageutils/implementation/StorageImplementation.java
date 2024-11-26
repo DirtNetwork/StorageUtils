@@ -7,13 +7,14 @@
 package net.dirtcraft.storageutils.implementation;
 
 import net.dirtcraft.storageutils.Storage;
+import net.dirtcraft.storageutils.taskcontext.TaskContext;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface StorageImplementation {
+public interface StorageImplementation<T extends TaskContext> {
 
     void init() throws Exception;
 
     void shutdown();
 
-    <T> T performTask(final Storage.@NonNull ResultTask<T> task);
+    <R> R performTask(final Storage.@NonNull ResultTask<T, R> task);
 }

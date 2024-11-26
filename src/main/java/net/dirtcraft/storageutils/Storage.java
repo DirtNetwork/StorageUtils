@@ -18,21 +18,21 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Provides a {@link CompletableFuture} based API for interacting with a
  * {@link StorageImplementation}.
  */
-public class Storage {
+public class Storage<T extends TaskContext> {
 
     private final LoggerAdapter logger;
-    private final StorageImplementation implementation;
+    private final StorageImplementation<T> implementation;
 
-    public Storage(final LoggerAdapter logger, final StorageImplementation implementation) {
+    public Storage(final LoggerAdapter logger, final StorageImplementation<T> implementation) {
         this.logger = logger;
         this.implementation = implementation;
     }
 
-    public StorageImplementation getImplementation() {
+    public StorageImplementation<T> getImplementation() {
         return this.implementation;
     }
 
-    public Collection<StorageImplementation> getImplementations() {
+    public Collection<StorageImplementation<T>> getImplementations() {
         return Collections.singleton(this.implementation);
     }
 
@@ -53,7 +53,7 @@ public class Storage {
      *
      * @param task the task
      */
-    public void performTask(@NonNull final Task task) {
+    public void performTask(@NonNull final Task<T> task) {
         this.implementation.performTask(task);
     }
 
@@ -62,34 +62,34 @@ public class Storage {
      *
      * @param task the result task
      */
-    public <T> @NonNull T performTask(@NonNull final ResultTask<T> task) {
+    public <R> @NonNull R performTask(@NonNull final ResultTask<T, R> task) {
         return this.implementation.performTask(task);
     }
 
     @FunctionalInterface
-    public interface ResultTask<R> {
+    public interface ResultTask<T extends TaskContext, R> {
 
         /**
          * Performs this operation on the given task context.
          *
-         * @param context the context
+         * @param context the task context
          * @return the result
          */
-        R execute(@NonNull TaskContext context) throws Exception;
+        R execute(@NonNull T context) throws Exception;
     }
 
     @FunctionalInterface
-    public interface Task extends ResultTask<Void> {
+    public interface Task<T extends TaskContext> extends ResultTask<T, Void> {
 
         /**
          * Performs this operation on the given task context. Does not return a result.
          *
-         * @param context the context
+         * @param context the task context
          */
-        void executeNoResult(@NonNull TaskContext context) throws Exception;
+        void executeNoResult(@NonNull T context) throws Exception;
 
         @Override
-        default Void execute(@NonNull final TaskContext context) throws Exception {
+        default Void execute(@NonNull final T context) throws Exception {
             this.executeNoResult(context);
             return null;
         }

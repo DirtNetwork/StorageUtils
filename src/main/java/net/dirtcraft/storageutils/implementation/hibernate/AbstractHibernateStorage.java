@@ -19,7 +19,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.JDBCConnectionException;
 
-public abstract class AbstractHibernateStorage implements StorageImplementation {
+public abstract class AbstractHibernateStorage<T extends TaskContext> implements StorageImplementation<T> {
 
     private final LoggerAdapter logger;
     private final AbstractHibernateConnectionFactory connectionFactory;
@@ -35,7 +35,7 @@ public abstract class AbstractHibernateStorage implements StorageImplementation 
     protected abstract int getRetriesUponException();
 
     @NonNull
-    protected abstract TaskContext createTaskContext(@NonNull Session session);
+    protected abstract T createTaskContext(@NonNull Session session);
 
     @Override
     public void init() throws Exception {
@@ -57,7 +57,7 @@ public abstract class AbstractHibernateStorage implements StorageImplementation 
      * @param task the task
      */
     @Override
-    public <T> T performTask(final Storage.@NonNull ResultTask<T> task) {
+    public <R> R performTask(final Storage.@NonNull ResultTask<T, R> task) {
         final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss() + 1;
         final int retriesUponDeadlock = this.getRetriesUponException() + 1;
         int connectionTryIndex = 0;
@@ -72,8 +72,8 @@ public abstract class AbstractHibernateStorage implements StorageImplementation 
                     final Transaction transaction = session.beginTransaction();
 
                     try {
-                        final TaskContext taskContext = this.createTaskContext(session);
-                        final T result = task.execute(taskContext);
+                        final T taskContext = this.createTaskContext(session);
+                        final R result = task.execute(taskContext);
 
                         transaction.commit();
                         // execute tasks after transaction was successfully committed
