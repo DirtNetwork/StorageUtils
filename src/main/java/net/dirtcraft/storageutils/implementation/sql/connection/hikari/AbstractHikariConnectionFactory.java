@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import net.dirtcraft.storageutils.StorageCredentials;
 import net.dirtcraft.storageutils.implementation.sql.connection.SQLConnectionFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Abstract {@link SQLConnectionFactory} using a {@link HikariDataSource}.
@@ -54,6 +55,9 @@ public abstract class AbstractHikariConnectionFactory implements SQLConnectionFa
     protected abstract void configureDatabase(HikariConfig config, String address, String port,
             String databaseName, String username, String password);
 
+    @NonNull
+    protected abstract String getPoolName();
+
     @Override
     public void init() {
         final HikariConfig config;
@@ -66,7 +70,7 @@ public abstract class AbstractHikariConnectionFactory implements SQLConnectionFa
         }
 
         // set pool name so the logging output can be linked back to us
-        config.setPoolName("dirtcore-hikari");
+        config.setPoolName(this.getPoolName());
 
         // get the database info/credentials from the config file
         final String[] addressSplit = this.configuration.getAddress().split(":");
