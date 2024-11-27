@@ -22,8 +22,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public abstract class AbstractHikariConnectionFactory implements SQLConnectionFactory {
 
-    private final StorageCredentials configuration;
-    private HikariDataSource hikari;
+    protected final StorageCredentials configuration;
+    protected HikariDataSource hikari;
 
     public AbstractHikariConnectionFactory(final StorageCredentials configuration) {
         this.configuration = configuration;

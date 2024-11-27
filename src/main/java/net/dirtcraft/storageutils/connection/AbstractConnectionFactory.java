@@ -13,9 +13,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public abstract class AbstractConnectionFactory<T> implements ConnectionFactory<T> {
 
     protected final LoggerAdapter logger;
-    private final StorageCredentials credentials;
-    private final String address;
-    private final int port;
+    protected final StorageCredentials credentials;
+    protected final String address;
+    protected final int port;
 
     protected AbstractConnectionFactory(final LoggerAdapter logger,
             final StorageCredentials credentials) {

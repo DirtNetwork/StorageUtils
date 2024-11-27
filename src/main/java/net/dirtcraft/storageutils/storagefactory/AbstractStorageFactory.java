@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class AbstractStorageFactory<S extends Storage<?>> implements StorageFactory {
 
-    private final LoggerAdapter logger;
+    protected final LoggerAdapter logger;
 
     public AbstractStorageFactory(final LoggerAdapter logger) {
         this.logger = logger;

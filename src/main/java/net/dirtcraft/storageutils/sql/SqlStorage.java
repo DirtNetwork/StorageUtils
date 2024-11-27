@@ -12,9 +12,9 @@ import net.dirtcraft.storageutils.sql.connection.SQLConnectionFactory;
 
 public class SqlStorage {
 
-    private final LoggerAdapter logger;
-    private final SQLConnectionFactory sqlConnectionFactory;
-    private final Function<String, String> statementProcessor;
+    protected final LoggerAdapter logger;
+    protected final SQLConnectionFactory sqlConnectionFactory;
+    protected final Function<String, String> statementProcessor;
 
     public SqlStorage(final LoggerAdapter logger, final SQLConnectionFactory sqlConnectionFactory,
             final String tablePrefix) {

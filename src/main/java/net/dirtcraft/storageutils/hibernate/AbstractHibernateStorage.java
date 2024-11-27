@@ -21,8 +21,8 @@ import org.hibernate.exception.JDBCConnectionException;
 
 public abstract class AbstractHibernateStorage<T extends TaskContext> implements HibernateStorageImplementation<T> {
 
-    private final LoggerAdapter logger;
-    private final AbstractHibernateConnectionFactory connectionFactory;
+    protected final LoggerAdapter logger;
+    protected final AbstractHibernateConnectionFactory connectionFactory;
 
     public AbstractHibernateStorage(final LoggerAdapter logger,
             final AbstractHibernateConnectionFactory connectionFactory) {

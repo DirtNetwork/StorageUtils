@@ -14,9 +14,9 @@ import org.hibernate.Session;
 public class StandardTaskContext implements TaskContext {
 
     @NonNull
-    private final Session session;
+    protected final Session session;
     @NonNull
-    private final Queue<Runnable> queue = new LinkedList<>();
+    protected final Queue<Runnable> queue = new LinkedList<>();
 
     public StandardTaskContext(@NonNull final Session session) {
         this.session = session;

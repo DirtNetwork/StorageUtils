@@ -23,7 +23,7 @@ public abstract class AbstractDriverBasedHikariConnectionFactory extends Abstrac
         super(configuration);
     }
 
-    private static void deregisterDriver(final String driverClassName) {
+    protected static void deregisterDriver(final String driverClassName) {
         final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             final Driver driver = drivers.nextElement();
