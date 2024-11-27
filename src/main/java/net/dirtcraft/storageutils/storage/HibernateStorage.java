@@ -4,48 +4,18 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils;
+package net.dirtcraft.storageutils.storage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
-import net.dirtcraft.storageutils.implementation.StorageImplementation;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
+import net.dirtcraft.storageutils.storage.implementation.HibernateStorageImplementation;
 import net.dirtcraft.storageutils.taskcontext.TaskContext;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/**
- * Provides a {@link CompletableFuture} based API for interacting with a
- * {@link StorageImplementation}.
- */
-public class Storage<T extends TaskContext> {
+public class HibernateStorage<T extends TaskContext> extends Storage<HibernateStorageImplementation<T>> {
 
-    protected final LoggerAdapter logger;
-    protected final StorageImplementation<T> implementation;
-
-    public Storage(final LoggerAdapter logger, final StorageImplementation<T> implementation) {
-        this.logger = logger;
-        this.implementation = implementation;
-    }
-
-    public StorageImplementation<T> getImplementation() {
-        return this.implementation;
-    }
-
-    public Collection<StorageImplementation<T>> getImplementations() {
-        return Collections.singleton(this.implementation);
-    }
-
-    public void init() throws Exception {
-        this.implementation.init();
-    }
-
-    public void shutdown() {
-        try {
-            this.implementation.shutdown();
-        } catch (final Exception e) {
-            this.logger.severe("Failed to shutdown storage implementation", e);
-        }
+    public HibernateStorage(final LoggerAdapter logger,
+            final HibernateStorageImplementation<T> implementation) {
+        super(logger, implementation);
     }
 
     /**
@@ -53,7 +23,7 @@ public class Storage<T extends TaskContext> {
      *
      * @param task the task
      */
-    public <ST extends Storage.Task<T>> void performTask(@NonNull final ST task) {
+    public void performTask(@NonNull final Task<T> task) {
         this.implementation.performTask(task);
     }
 
@@ -62,7 +32,7 @@ public class Storage<T extends TaskContext> {
      *
      * @param task the result task
      */
-    public <SR extends Storage.ResultTask<T, R>, R> R performTask(@NonNull final SR task) {
+    public <R> R performTask(@NonNull final ResultTask<T, R> task) {
         return this.implementation.performTask(task);
     }
 

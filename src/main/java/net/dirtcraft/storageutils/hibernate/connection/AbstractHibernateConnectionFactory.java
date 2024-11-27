@@ -4,11 +4,11 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.hibernate.connection;
+package net.dirtcraft.storageutils.hibernate.connection;
 
 import net.dirtcraft.storageutils.StorageCredentials;
 import net.dirtcraft.storageutils.StorageType;
-import net.dirtcraft.storageutils.implementation.connection.AbstractConnectionFactory;
+import net.dirtcraft.storageutils.connection.AbstractConnectionFactory;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.hibernate.SessionFactory;

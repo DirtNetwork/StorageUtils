@@ -4,11 +4,11 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.sql;
+package net.dirtcraft.storageutils.sql;
 
 import java.util.function.Function;
-import net.dirtcraft.storageutils.implementation.sql.connection.SQLConnectionFactory;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
+import net.dirtcraft.storageutils.sql.connection.SQLConnectionFactory;
 
 public class SqlStorage {
 

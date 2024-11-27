@@ -4,7 +4,7 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.sql.connection;
+package net.dirtcraft.storageutils.sql.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

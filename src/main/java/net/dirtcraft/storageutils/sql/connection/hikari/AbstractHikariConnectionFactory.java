@@ -4,7 +4,7 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.sql.connection.hikari;
+package net.dirtcraft.storageutils.sql.connection.hikari;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import net.dirtcraft.storageutils.StorageCredentials;
-import net.dirtcraft.storageutils.implementation.sql.connection.SQLConnectionFactory;
+import net.dirtcraft.storageutils.sql.connection.SQLConnectionFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**

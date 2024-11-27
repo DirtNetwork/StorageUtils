@@ -4,22 +4,22 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.hibernate;
+package net.dirtcraft.storageutils.hibernate;
 
 import java.sql.SQLTransactionRollbackException;
 import java.util.concurrent.CompletionException;
 import javax.persistence.PersistenceException;
-import net.dirtcraft.storageutils.Storage;
-import net.dirtcraft.storageutils.implementation.StorageImplementation;
-import net.dirtcraft.storageutils.implementation.hibernate.connection.AbstractHibernateConnectionFactory;
+import net.dirtcraft.storageutils.hibernate.connection.AbstractHibernateConnectionFactory;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
+import net.dirtcraft.storageutils.storage.HibernateStorage;
+import net.dirtcraft.storageutils.storage.implementation.HibernateStorageImplementation;
 import net.dirtcraft.storageutils.taskcontext.TaskContext;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.JDBCConnectionException;
 
-public abstract class AbstractHibernateStorage<T extends TaskContext> implements StorageImplementation<T> {
+public abstract class AbstractHibernateStorage<T extends TaskContext> implements HibernateStorageImplementation<T> {
 
     private final LoggerAdapter logger;
     private final AbstractHibernateConnectionFactory connectionFactory;
@@ -57,7 +57,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
      * @param task the task
      */
     @Override
-    public <SR extends Storage.ResultTask<T, R>, R> R performTask(@NonNull final SR task) {
+    public <R> R performTask(final HibernateStorage.@NonNull ResultTask<T, R> task) {
         final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss() + 1;
         final int retriesUponDeadlock = this.getRetriesUponException() + 1;
         int connectionTryIndex = 0;

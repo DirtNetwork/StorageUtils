@@ -4,7 +4,7 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.connection;
+package net.dirtcraft.storageutils.connection;
 
 import net.dirtcraft.storageutils.StorageCredentials;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;

@@ -4,7 +4,7 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.connection;
+package net.dirtcraft.storageutils.connection;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 

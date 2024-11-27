@@ -6,13 +6,12 @@
 
 package net.dirtcraft.storageutils.storagefactory;
 
-import net.dirtcraft.storageutils.Storage;
 import net.dirtcraft.storageutils.StorageType;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
-import net.dirtcraft.storageutils.taskcontext.TaskContext;
+import net.dirtcraft.storageutils.storage.Storage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public abstract class AbstractStorageFactory<S extends Storage<T>, T extends TaskContext> implements StorageFactory<T> {
+public abstract class AbstractStorageFactory<S extends Storage<?>> implements StorageFactory {
 
     private final LoggerAdapter logger;
 

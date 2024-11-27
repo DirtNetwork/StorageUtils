@@ -4,7 +4,7 @@
  * ALL RIGHTS RESERVED.
  */
 
-package net.dirtcraft.storageutils.implementation.sql.connection.hikari;
+package net.dirtcraft.storageutils.sql.connection.hikari;
 
 import java.util.function.Function;
 import net.dirtcraft.storageutils.StorageCredentials;

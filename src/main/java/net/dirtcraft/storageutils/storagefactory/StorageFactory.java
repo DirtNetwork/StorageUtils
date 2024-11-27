@@ -7,12 +7,11 @@
 package net.dirtcraft.storageutils.storagefactory;
 
 import java.util.Set;
-import net.dirtcraft.storageutils.Storage;
 import net.dirtcraft.storageutils.StorageType;
-import net.dirtcraft.storageutils.taskcontext.TaskContext;
+import net.dirtcraft.storageutils.storage.Storage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface StorageFactory<T extends TaskContext> {
+public interface StorageFactory {
 
     @NonNull Set<StorageType> getRequiredTypes();
 
