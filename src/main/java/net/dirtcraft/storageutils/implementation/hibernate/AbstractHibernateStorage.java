@@ -57,7 +57,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
      * @param task the task
      */
     @Override
-    public <R> R performTask(final Storage.@NonNull ResultTask<T, R> task) {
+    public <SR extends Storage.ResultTask<T, R>, R> R performTask(@NonNull final SR task) {
         final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss() + 1;
         final int retriesUponDeadlock = this.getRetriesUponException() + 1;
         int connectionTryIndex = 0;

@@ -20,8 +20,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class Storage<T extends TaskContext> {
 
-    private final LoggerAdapter logger;
-    private final StorageImplementation<T> implementation;
+    protected final LoggerAdapter logger;
+    protected final StorageImplementation<T> implementation;
 
     public Storage(final LoggerAdapter logger, final StorageImplementation<T> implementation) {
         this.logger = logger;
@@ -53,7 +53,7 @@ public class Storage<T extends TaskContext> {
      *
      * @param task the task
      */
-    public void performTask(@NonNull final Task<T> task) {
+    public <ST extends Storage.Task<T>> void performTask(@NonNull final ST task) {
         this.implementation.performTask(task);
     }
 
@@ -62,7 +62,7 @@ public class Storage<T extends TaskContext> {
      *
      * @param task the result task
      */
-    public <R> @NonNull R performTask(@NonNull final ResultTask<T, R> task) {
+    public <SR extends Storage.ResultTask<T, R>, R> R performTask(@NonNull final SR task) {
         return this.implementation.performTask(task);
     }
 

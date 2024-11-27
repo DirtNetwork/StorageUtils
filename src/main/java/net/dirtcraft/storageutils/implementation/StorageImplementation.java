@@ -16,5 +16,5 @@ public interface StorageImplementation<T extends TaskContext> {
 
     void shutdown();
 
-    <R> R performTask(final Storage.@NonNull ResultTask<T, R> task);
+    <SR extends Storage.ResultTask<T, R>, R> R performTask(@NonNull SR task);
 }
