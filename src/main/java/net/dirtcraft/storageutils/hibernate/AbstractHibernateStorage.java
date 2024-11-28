@@ -59,16 +59,14 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
     @Override
     public <R> R performTask(final HibernateStorage.@NonNull ResultTask<T, R> task) {
         final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss() + 1;
-        final int retriesUponDeadlock = this.getRetriesUponException() + 1;
+        final int retriesUponException = this.getRetriesUponException() + 1;
         int connectionTryIndex = 0;
 
         while (true) {
             try (final Session session = this.connectionFactory.getConnection().openSession()) {
                 int tryIndex = 0;
 
-                while (tryIndex <= retriesUponDeadlock) {
-                    System.out.println("TRY INDEX: " + tryIndex + " <= " + retriesUponDeadlock);
-
+                while (tryIndex <= retriesUponException) {
                     final Transaction transaction = session.beginTransaction();
 
                     try {
@@ -82,11 +80,11 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
                         return result;
                     } catch (final PersistenceException | SQLTransactionRollbackException e) {
                         tryIndex++;
-                        this.logger.severe("Caught exception.", e);
-                        this.logger.info("Ran into deadlock. Trying to perform task again: #{}",
+                        // TODO: probably better to remove or move to debug?
+                        this.logger.info(
+                                "Ran into persistence exception. Trying to perform task again: #{}",
                                 tryIndex);
                     } catch (final Exception e) {
-                        System.out.println("ROLLBACK: " + e.getMessage());
                         transaction.rollback();
 
                         if (e instanceof RuntimeException) {
