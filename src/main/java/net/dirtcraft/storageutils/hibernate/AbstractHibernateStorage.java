@@ -38,7 +38,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
     protected abstract T createTaskContext(@NonNull Session session);
 
     @Override
-    public void init() throws Exception {
+    public void init() {
         this.connectionFactory.init();
     }
 
@@ -58,15 +58,15 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
      */
     @Override
     public <R> R performTask(final HibernateStorage.@NonNull ResultTask<T, R> task) {
-        final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss() + 1;
-        final int retriesUponException = this.getRetriesUponException() + 1;
+        final int retriesUponConnectionLoss = this.getRetriesUponConnectionLoss();
+        final int retriesUponException = this.getRetriesUponException();
         int connectionTryIndex = 0;
 
         while (true) {
             try (final Session session = this.connectionFactory.getConnection().openSession()) {
                 int tryIndex = 0;
 
-                while (tryIndex <= retriesUponException) {
+                while (true) {
                     final Transaction transaction = session.beginTransaction();
 
                     try {
@@ -78,14 +78,21 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
                         taskContext.executeTasks();
 
                         return result;
-                    } catch (final PersistenceException | SQLTransactionRollbackException e) {
-                        tryIndex++;
-                        // TODO: probably better to remove or move to debug?
-                        this.logger.info(
-                                "Ran into persistence exception. Trying to perform task again: #{}",
-                                tryIndex);
                     } catch (final Exception e) {
                         transaction.rollback();
+
+                        if (e instanceof PersistenceException
+                                || e instanceof SQLTransactionRollbackException) {
+                            tryIndex++;
+
+                            if (tryIndex <= retriesUponException) {
+                                continue;
+                            }
+
+                            this.logger.severe(
+                                    "Ran into persistence exception after trying {} times.",
+                                    tryIndex);
+                        }
 
                         if (e instanceof RuntimeException) {
                             throw (RuntimeException) e;
@@ -97,15 +104,15 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
             } catch (final JDBCConnectionException e) {
                 connectionTryIndex++;
 
-                if (connectionTryIndex > retriesUponConnectionLoss) {
-                    throw new CompletionException(e);
+                if (connectionTryIndex <= retriesUponConnectionLoss) {
+                    // we are doing this due to the reconnect properties if we fail to establish
+                    // a connection, hibernate will automatically try to reconnect
+                    continue;
                 }
 
-                // we are doing this due to the reconnect properties
-                // if we fail to establish a connection, hibernate will automatically try to
-                // reconnect
-                this.logger.info("Could not open session. Trying to reconnect: #{}",
+                this.logger.severe("Could not open session after trying {} times.",
                         connectionTryIndex);
+                throw new CompletionException(e);
             }
         }
     }
