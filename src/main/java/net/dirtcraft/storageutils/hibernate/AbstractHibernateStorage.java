@@ -6,15 +6,22 @@
 
 package net.dirtcraft.storageutils.hibernate;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.BatchUpdateException;
 import java.sql.SQLTransactionRollbackException;
+import java.util.List;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.PersistenceException;
 import net.dirtcraft.storageutils.hibernate.connection.AbstractHibernateConnectionFactory;
 import net.dirtcraft.storageutils.logging.LoggerAdapter;
 import net.dirtcraft.storageutils.storage.HibernateStorage;
 import net.dirtcraft.storageutils.storage.implementation.HibernateStorageImplementation;
 import net.dirtcraft.storageutils.taskcontext.TaskContext;
+import net.dirtcraft.storageutils.util.SchemaReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.JDBCConnectionException;
@@ -40,6 +47,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
     @Override
     public void init() throws Exception {
         this.connectionFactory.init();
+        this.applySchema();
     }
 
     @Override
@@ -115,5 +123,72 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
                 throw new CompletionException(e);
             }
         }
+    }
+
+    @Nullable
+    protected InputStream getSchema() {
+        return null;
+    }
+
+    protected void applySchema() throws IOException {
+        List<String> statements;
+
+        try (final InputStream is = this.getSchema()) {
+            if (is == null) {
+                throw new IOException("Could not locate schema file.");
+            }
+
+            statements = SchemaReader.getStatements(is);
+        }
+
+        statements = SchemaReader.filterStatements(statements, this.getTables());
+
+        if (statements.isEmpty()) {
+            return;
+        }
+
+        final List<String> finalStatements = statements;
+        final AtomicBoolean utf8mb4Unsupported = new AtomicBoolean(false);
+
+        try {
+            this.performTask(context -> {
+                final Session session = context.session();
+
+                for (final String query : finalStatements) {
+                    session.createNativeQuery(query).executeUpdate();
+                }
+
+                return null;
+            });
+        } catch (final CompletionException e) {
+            if (e.getCause() instanceof BatchUpdateException) {
+                if (!e.getMessage().contains("Unknown character set")) {
+                    throw e;
+                }
+
+                utf8mb4Unsupported.set(true);
+            }
+        }
+
+        // try again
+        if (utf8mb4Unsupported.get()) {
+            this.performTask(context -> {
+                final Session session = context.session();
+
+                for (final String query : finalStatements) {
+                    session.createNativeQuery(query.replace("utf8mb4", "utf8")).executeUpdate();
+                }
+
+                return null;
+            });
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    protected List<String> getTables() {
+        return this.performTask(context -> (List<String>) context.session().createNativeQuery(
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = '"
+                        + this.connectionFactory.getDatabase() + '\'').getResultList());
     }
 }
