@@ -38,7 +38,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
     protected abstract T createTaskContext(@NonNull Session session);
 
     @Override
-    public void init() {
+    public void init() throws Exception {
         this.connectionFactory.init();
     }
 
