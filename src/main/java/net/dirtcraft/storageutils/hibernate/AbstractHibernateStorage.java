@@ -87,19 +87,21 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
 
                         return result;
                     } catch (final Exception e) {
-                        transaction.rollback();
+                        if (transaction.isActive()) {
+                            transaction.rollback();
 
-                        if (e instanceof PersistenceException
-                                || e instanceof SQLTransactionRollbackException) {
-                            tryIndex++;
+                            if (e instanceof PersistenceException
+                                    || e instanceof SQLTransactionRollbackException) {
+                                tryIndex++;
 
-                            if (tryIndex <= retriesUponException) {
-                                continue;
+                                if (tryIndex <= retriesUponException) {
+                                    continue;
+                                }
+
+                                this.logger.severe(
+                                        "Ran into persistence exception after trying {} times.",
+                                        tryIndex);
                             }
-
-                            this.logger.severe(
-                                    "Ran into persistence exception after trying {} times.",
-                                    tryIndex);
                         }
 
                         if (e instanceof RuntimeException) {
