@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2024 Marc Beckhaeuser (AlphaConqueror) <marcbeckhaeuser@gmail.com>
- *
- * Created for 'DirtCraft'.
+ * Copyright (c) 2025 Marc Beckhaeuser (AlphaConqueror) <marcbeckhaeuser@gmail.com>
  *
  * ALL RIGHTS RESERVED.
  */

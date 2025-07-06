@@ -147,7 +147,7 @@ tasks.named('jar', Jar).configure {
 publishing {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/DirtNetwork/StorageUtils")
+            url = uri("https://maven.pkg.github.com/AlphaConqueror/StorageUtils")
 
             credentials {
                 username = envMap["USERNAME"]
