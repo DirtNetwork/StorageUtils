@@ -26,7 +26,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.JDBCConnectionException;
 
-public abstract class AbstractHibernateStorage<T extends TaskContext> implements HibernateStorageImplementation<T> {
+public abstract class AbstractHibernateStorage<T extends TaskContext>
+        implements HibernateStorageImplementation<T> {
 
     protected final LoggerAdapter logger;
     protected final AbstractHibernateConnectionFactory connectionFactory;
@@ -76,9 +77,9 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
 
                 while (true) {
                     final Transaction transaction = session.beginTransaction();
+                    final T taskContext = this.createTaskContext(session);
 
                     try {
-                        final T taskContext = this.createTaskContext(session);
                         final R result = task.execute(taskContext);
 
                         transaction.commit();
@@ -89,6 +90,7 @@ public abstract class AbstractHibernateStorage<T extends TaskContext> implements
                     } catch (final Exception e) {
                         if (transaction.isActive()) {
                             transaction.rollback();
+                            taskContext.executeRollbackTasks();
 
                             if (e instanceof PersistenceException
                                     || e instanceof SQLTransactionRollbackException) {

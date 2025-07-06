@@ -16,17 +16,30 @@ public interface TaskContext {
      *
      * @return the session
      */
-    @NonNull Session session();
+    @NonNull
+    Session session();
 
     /**
-     * Queues a runnable task.
+     * Queues a runnable task upon commit.
      *
      * @param runnable the runnable
      */
     void queue(@NonNull Runnable runnable);
 
     /**
-     * Executes the runnable tasks.
+     * Executes the runnable tasks upon commit.
      */
     void executeTasks();
+
+    /**
+     * Queues a runnable task upon rollback.
+     *
+     * @param runnable the runnable
+     */
+    void onRollback(@NonNull final Runnable runnable);
+
+    /**
+     * Executes the runnable tasks upon rollback.
+     */
+    void executeRollbackTasks();
 }

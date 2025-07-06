@@ -17,6 +17,8 @@ public class StandardTaskContext implements TaskContext {
     protected final Session session;
     @NonNull
     protected final Queue<Runnable> queue = new LinkedList<>();
+    @NonNull
+    private final Queue<Runnable> rollbackQueue = new LinkedList<>();
 
     public StandardTaskContext(@NonNull final Session session) {
         this.session = session;
@@ -36,6 +38,18 @@ public class StandardTaskContext implements TaskContext {
     public void executeTasks() {
         while (!this.queue.isEmpty()) {
             this.queue.poll().run();
+        }
+    }
+
+    @Override
+    public void onRollback(@NonNull final Runnable runnable) {
+        this.rollbackQueue.add(runnable);
+    }
+
+    @Override
+    public void executeRollbackTasks() {
+        while (!this.rollbackQueue.isEmpty()) {
+            this.rollbackQueue.poll().run();
         }
     }
 }
