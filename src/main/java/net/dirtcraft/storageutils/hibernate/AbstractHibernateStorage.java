@@ -42,6 +42,10 @@ public abstract class AbstractHibernateStorage<T extends TaskContext>
 
     protected abstract int getRetriesUponException();
 
+    protected abstract long getSleepUponRetry();
+
+    protected abstract long getSleepUponRetryIncrement();
+
     @NonNull
     protected abstract T createTaskContext(@NonNull Session session);
 
@@ -97,6 +101,14 @@ public abstract class AbstractHibernateStorage<T extends TaskContext>
                                 tryIndex++;
 
                                 if (tryIndex <= retriesUponException) {
+                                    try {
+                                        //noinspection BusyWait
+                                        Thread.sleep(this.getSleepUponRetry() + (tryIndex
+                                                * this.getSleepUponRetryIncrement()));
+                                    } catch (final InterruptedException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+
                                     continue;
                                 }
 
