@@ -95,27 +95,27 @@ public abstract class AbstractHibernateStorage<T extends TaskContext>
                         if (transaction.isActive()) {
                             transaction.rollback();
                             taskContext.executeRollbackTasks();
+                        }
 
-                            if (e instanceof PersistenceException
-                                    || e instanceof SQLTransactionRollbackException) {
-                                tryIndex++;
+                        if (e instanceof PersistenceException
+                                || e instanceof SQLTransactionRollbackException) {
+                            tryIndex++;
 
-                                if (tryIndex <= retriesUponException) {
-                                    try {
-                                        //noinspection BusyWait
-                                        Thread.sleep(this.getSleepUponRetry() + (tryIndex
-                                                * this.getSleepUponRetryIncrement()));
-                                    } catch (final InterruptedException ex) {
-                                        throw new RuntimeException(ex);
-                                    }
-
-                                    continue;
+                            if (tryIndex <= retriesUponException) {
+                                try {
+                                    //noinspection BusyWait
+                                    Thread.sleep(this.getSleepUponRetry() + (tryIndex
+                                            * this.getSleepUponRetryIncrement()));
+                                } catch (final InterruptedException ex) {
+                                    throw new RuntimeException(ex);
                                 }
 
-                                this.logger.severe(
-                                        "Ran into persistence exception after trying {} times.",
-                                        tryIndex);
+                                continue;
                             }
+
+                            this.logger.severe(
+                                    "Ran into persistence exception after trying {} times.",
+                                    tryIndex);
                         }
 
                         if (e instanceof RuntimeException) {
